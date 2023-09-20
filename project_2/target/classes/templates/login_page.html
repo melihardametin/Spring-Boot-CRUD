@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+
+
+<div class="form">
+    <form id="form">
+        <h2>Login</h2>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="username" name="username" placeholder="Username" required >
+        </div>
+        <div class="input-box">
+            <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+            <input type="password" id="password" name="password" placeholder="Password" required >
+        </div>
+        <div class="input-box">
+            <input type="submit" name="sign-in" value="Sign in">
+        </div>
+        <a href="/register">Not registered yet?</a>
+        </br>
+        <a id="result"></a>
+    </form>
+</div>
+
+<script type="text/javascript" src="xhr_login.js"></script>
+
+</body>
+</html>

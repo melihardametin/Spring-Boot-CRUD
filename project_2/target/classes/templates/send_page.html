@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Send Page</title>
+    <link rel="stylesheet" href="/css/user_page.css">
+
+
+</head>
+<body>
+
+
+
+<div class="form">
+    <form id="form">
+        <h2>Message</h2>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="to" name="to" placeholder="To:" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="title" name="title" placeholder="Title:" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="message" name="message" placeholder="Message" required>
+        </div>
+
+        <div class="input-box">
+            <input type="submit" name="send" value="Send">
+        </div>
+        <a id="result"></a>
+    </form>
+</div>
+
+<script>
+    document.getElementById("form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        submitForm();
+    });
+
+    function getUserIdFromServer(token, callback) {
+        var xhr = new XMLHttpRequest();
+        xhr.open("POST", "http://localhost:8080/adminuser/get_userId", true);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("token"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    console.log(xhr.responseText)
+                    var userId = xhr.responseText;
+                    callback(userId); // Call the callback function with the userId value
+                }
+                else if (xhr.status === 401) {
+                    console.error("Unauthorized..... " + xhr.status);
+                }
+                else {
+                    console.error("Failed to get userId from the server");
+                    callback(null); // Call the callback function with null if the request fails
+                }
+            }
+        };
+        xhr.send();
+    }
+
+    function submitForm() {
+        var receiver = document.getElementById("to").value;
+        var title = document.getElementById("title").value;
+        var message = document.getElementById("message").value;
+
+        var xhr = new XMLHttpRequest();
+
+        var token = localStorage.getItem("token");
+
+        getUserIdFromServer(token, function(userId) {
+            console.log(token);
+            if (userId) {
+                xhr.open("POST", "http://localhost:8080/user/send", true);
+                xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("token"));
+                xhr.setRequestHeader("Content-Type", "application/json");
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 201) {
+                            // Request successful
+                            var response = JSON.parse(xhr.responseText);
+                            // Handle the response from the server
+                            console.log("success " + xhr.status);
+                            var x = document.getElementById("result");
+                            x.innerHTML = "Message sent.";
+                            // ...
+                        }
+                        else if (xhr.status === 401) {
+                            console.error("Unauthorized..... " + xhr.status);
+                        }
+                        else if (xhr.status === 404) {
+                            var x = document.getElementById("result");
+                            x.innerHTML = "No such a user.";
+                        }
+                        else {
+                            // Request failed
+                            console.error("Request failed with status " + xhr.status);
+                        }
+                    }
+                };
+
+                var data = {
+                    sender: userId,
+                    receiver: receiver,
+                    title: title,
+                    message: message
+                };
+
+                xhr.send(JSON.stringify(data));
+            } else {
+                console.error("Unable to get userId from the server. Cannot send the message.");
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

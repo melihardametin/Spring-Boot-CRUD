@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>List Users Page</title>
+    <link rel="stylesheet" href="/css/user_page.css">
+</head>
+
+<body>
+
+<table>
+    <thead>
+    <tr>
+        <th>Username</th>
+        <th>Name</th>
+        <th>Surname</th>
+        <th>Birthday</th>
+        <th>Gender</th>
+        <th>Mail</th>
+        <th>City</th>
+    </tr>
+    </thead>
+    <tbody id="data-output" >
+
+    </tbody>
+</table>
+
+<script>
+
+
+
+    var xhr = new XMLHttpRequest();
+    xhr.open("POST", "http://localhost:8080/adminuser/list_users", true);
+    xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("token"));
+    xhr.setRequestHeader("Content-Type", "application/json");
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            console.log(xhr.status);
+            if (xhr.status === 200) {
+                var users = JSON.parse(xhr.responseText);
+                console.log(xhr.responseText);
+
+                let placeholder = document.querySelector("#data-output");
+                let out = "";
+                for (let user of users) {
+                    out += `<tr>
+                                    <td>${user.username}</td>
+                                    <td>${user.name}</td>
+                                    <td>${user.surname}</td>
+                                    <td>${user.date}</td>
+                                    <td>${user.gender}</td>
+                                    <td>${user.mail}</td>
+                                    <td>${user.city}</td>
+                             </tr>
+                        `;
+                }
+                placeholder.innerHTML = out;
+
+
+            }
+            else if (xhr.status === 204) {
+                console.log("No user");
+            }
+            else if (xhr.status === 401) {
+                console.error("Unauthorized..... " + xhr.status);
+            }
+            else {
+                console.error("Request failed with status " + xhr.status);
+            }
+        }
+
+    };xhr.send();
+</script>
+
+
+
+
+</body>
+</html>

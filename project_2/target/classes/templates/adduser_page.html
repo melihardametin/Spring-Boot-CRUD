@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Add Page</title>
+    <link rel="stylesheet" href="/css/user_page.css">
+
+
+</head>
+<body>
+
+
+
+<div class="form">
+    <form id="form">
+        <h2>Add</h2>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="username" name="username" placeholder="Username" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="name" name="name" placeholder="Name" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="surname" name="surname" placeholder="Surname" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="date" name="date" placeholder="Birthday" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="gender" name="gender" placeholder="Gender" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="mail" name="mail" placeholder="Mail" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="city" name="city" placeholder="City" required>
+        </div>
+        <div class="input-box">
+            <i class="fa fa-unlock-alt" aria-hidden="true"></i>
+            <input type="password" id="password" name="password" placeholder="Password" required>
+        </div>
+
+
+        <div class="check"> <label> <input type="checkbox" id="admin" name="admin"> Add as admin </label> <div>
+
+
+        <div class="input-box">
+            <input type="submit" name="add" value="Add">
+        </div>
+
+        <a id="result"></a>
+    </form>
+</div>
+
+
+
+<script>
+
+
+    document.getElementById("form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        submitForm();
+    });
+
+    function submitForm() {
+        var username = document.getElementById("username").value;
+        var name = document.getElementById("name").value;
+        var surname = document.getElementById("surname").value;
+        var date = document.getElementById("date").value;
+        var gender = document.getElementById("gender").value;
+        var mail = document.getElementById("mail").value;
+        var city = document.getElementById("city").value;
+        var password = document.getElementById("password").value;
+        var admin = document.getElementById("admin").checked
+
+        var xhr = new XMLHttpRequest();
+
+
+
+        xhr.open("POST", "http://localhost:8080/adminuser/add_user", true);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("token"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 201) {
+                    // Request successful
+                    var response = JSON.parse(xhr.responseText);
+                    // Handle the response from the server
+                    console.log("successs " + xhr.status);
+                    var x = document.getElementById("result");
+                    x.innerHTML = "User added.";
+                    // ...
+                }
+                else if (xhr.status === 401) {
+                    console.error("Unauthorized..... " + xhr.status);
+                }
+                else {
+                    console.log(xhr.responseText);
+                    // Request failed
+                    console.error("Request failed with status " + xhr.status);
+
+                }
+            }
+        };
+
+        var data = {
+            username: username,
+            name: name,
+            surname : surname,
+            date : date,
+            gender : gender,
+            mail : mail,
+            city : city,
+            password : password,
+            admin : admin
+        };
+
+        xhr.send(JSON.stringify(data));
+    }
+</script>
+
+</body>
+</html>

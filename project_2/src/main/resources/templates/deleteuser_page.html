@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Delete User Page</title>
+    <link rel="stylesheet" href="/css/user_page.css">
+</head>
+<body>
+
+<div class="form">
+    <form id="form">
+        <h2>Delete User</h2>
+        <div class="input-box">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <input type="text" id="username" name="username" placeholder="Username to delete" required>
+        </div>
+
+        <div class="input-box">
+            <input type="submit" name="delete" value="Delete">
+        </div>
+    </form>
+</div>
+
+<a id="result"></a>
+
+<script>
+
+    document.getElementById("form").addEventListener("submit", function(event) {
+        event.preventDefault();
+        submitForm();
+    });
+
+    function submitForm() {
+        var username = document.getElementById("username").value;
+
+        var xhr = new XMLHttpRequest();
+
+
+        xhr.open("DELETE", "http://localhost:8080/adminuser/delete_user", true);
+        xhr.setRequestHeader('Authorization', 'Bearer ' + localStorage.getItem("token"));
+        xhr.setRequestHeader("Content-Type", "application/json");
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                 if (xhr.status === 200) {
+                    // Request successful
+                    console.log("User deleted " + xhr.status);
+                    // ...
+                }
+                else if (xhr.status === 204) {
+                    // Request successful
+                    console.log("User not exists" + xhr.status);
+                     var x = document.getElementById("result");
+                     x.innerHTML = "User not exists.";
+                    // ...
+                }
+                 else if (xhr.status === 401) {
+                     console.error("Unauthorized..... " + xhr.status);
+                 }
+                 else {
+                    console.log(xhr.responseText);
+                    // Request failed
+                    console.error("Request failed with status " + xhr.status);
+
+                }
+            }
+        };
+
+        var data = {
+            username: username
+        };
+
+        xhr.send(JSON.stringify(data));
+
+    }
+</script>
+
+</body>
+</html>
